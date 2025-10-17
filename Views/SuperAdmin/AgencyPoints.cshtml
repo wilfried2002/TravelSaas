@@ -908,11 +908,14 @@
         return;
     }
 
-    // Afficher l'indicateur de chargement
-    const loadingMessage = currentPointId 
-        ? 'Mise à jour du point en cours...' 
-        : 'Création du point en cours...';
-    showLoadingIndicator(loadingMessage);
+    // Afficher le spinner global et désactiver le bouton
+    const saveBtn = document.getElementById('savePointBtn');
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Enregistrement...';
+    
+    // Afficher l'indicateur de processus
+    const processIndicator = document.getElementById('modalProcessIndicator');
+    processIndicator.style.display = 'block';
 
     try {
         const url = currentPointId 
@@ -928,74 +931,31 @@
         });
         
         if (res.ok) {
-            // SUCCÈS - Afficher le message de validation vert
-            showToast(
-                currentPointId ? 'Point modifié avec succès' : 'Point créé avec succès', 
-                'success'
-            );
+            // Succès : Fermer le modal, recharger les points et afficher un toast vert
             closeModal();
             await loadPoints();
+            showToast(
+                currentPointId ? 'Point modifié avec succès' : 'Point créé avec succès',
+                'success'
+            );
         } else {
-            // ERREUR - Récupérer le message d'erreur du serveur
-            let errorMessage = 'Erreur lors de l\'enregistrement';
-            
+            // En cas d'erreur, tenter de récupérer le message d'erreur du serveur
             try {
                 const errorData = await res.json();
-                errorMessage = errorData.message || errorMessage;
-                
-                // Gérer les erreurs de validation spécifiques
-                if (errorData.errors) {
-                    const validationErrors = Object.values(errorData.errors).flat();
-                    errorMessage = validationErrors.join(', ') || errorMessage;
-                }
-            } catch (parseError) {
-                // Si la réponse n'est pas du JSON, utiliser le statut HTTP
-                errorMessage = `Erreur ${res.status}: ${res.statusText}`;
+                showToast(errorData.message || 'Erreur lors de l\'enregistrement', 'error');
+            } catch {
+                showToast('Erreur lors de l\'enregistrement', 'error');
             }
-            
-            showToast(errorMessage, 'error');
         }
     } catch (e) {
         console.error('Erreur sauvegarde:', e);
         showToast('Erreur de connexion lors de l\'enregistrement', 'error');
     } finally {
-        // Toujours masquer l'indicateur de chargement
-        hideLoadingIndicator();
+        // Réinitialiser l'interface
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="bi bi-check-circle"></i> Enregistrer';
+        processIndicator.style.display = 'none';
     }
-}
-
-// Fonction pour afficher l'indicateur de chargement
-function showLoadingIndicator(message = 'Enregistrement en cours...') {
-    const overlay = document.getElementById('modalLoadingOverlay');
-    const loadingText = document.getElementById('modalLoadingText');
-    const saveBtn = document.getElementById('savePointBtn');
-    const cancelBtn = document.getElementById('cancelBtn');
-    
-    if (loadingText) loadingText.textContent = message;
-    if (overlay) overlay.style.display = 'flex';
-    
-    // Désactiver les boutons
-    if (saveBtn) saveBtn.disabled = true;
-    if (cancelBtn) cancelBtn.disabled = true;
-    
-    // Ajouter l'indicateur de chargement au bouton
-    if (saveBtn) saveBtn.classList.add('btn-loading');
-}
-
-// Fonction pour masquer l'indicateur de chargement
-function hideLoadingIndicator() {
-    const overlay = document.getElementById('modalLoadingOverlay');
-    const saveBtn = document.getElementById('savePointBtn');
-    const cancelBtn = document.getElementById('cancelBtn');
-    
-    if (overlay) overlay.style.display = 'none';
-    
-    // Réactiver les boutons
-    if (saveBtn) saveBtn.disabled = false;
-    if (cancelBtn) cancelBtn.disabled = false;
-    
-    // Retirer l'indicateur de chargement du bouton
-    if (saveBtn) saveBtn.classList.remove('btn-loading');
 }
 
         async function togglePointStatus(id, isActive) {
