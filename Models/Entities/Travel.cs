@@ -4,6 +4,7 @@
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public Guid AgencyId { get; set; }
+        public Guid? AgencyPointId { get; set; }
         public string Departure { get; set; }
         public string Destination { get; set; }
         public DateTime DepartureDate { get; set; }
@@ -11,9 +12,11 @@
         public decimal Price { get; set; }
         public int AvailableSeats { get; set; }
         public bool IsActive { get; set; } = true;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         // Navigation properties
         public Agency Agency { get; set; }
-        public ICollection<Reservation> Reservations { get; set; }
+        public AgencyPoint? AgencyPoint { get; set; }
+        public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
     }
 }

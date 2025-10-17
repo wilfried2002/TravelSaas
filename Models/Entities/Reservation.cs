@@ -8,15 +8,19 @@ namespace TravelSaaS.Models.Entities
         public Guid TravelId { get; set; }
         public Guid ClientId { get; set; }
         public Guid AgencyId { get; set; }
+        public Guid? AgencyPointId { get; set; }
         public int NumberOfPassengers { get; set; }
         public decimal TotalPrice { get; set; }
         public string Status { get; set; } = "Pending"; // Pending, Confirmed, Cancelled
         public DateTime ReservationDate { get; set; } = DateTime.UtcNow;
         public DateTime? ConfirmationDate { get; set; }
+        public string? ConfirmedById { get; set; }
 
         // Navigation properties
         public Travel Travel { get; set; }
         public Client Client { get; set; }
         public Agency Agency { get; set; }
+        public AgencyPoint? AgencyPoint { get; set; }
+        public ApplicationUser? ConfirmedBy { get; set; }
     }
 }

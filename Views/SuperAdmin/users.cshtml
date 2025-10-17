@@ -1,0 +1,1118 @@
+@{ Layout = null; }
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Utilisateurs - Super Admin</title>
+    <link rel="stylesheet" href="~/css/site.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: #f8f9fa;
+            min-height: 100vh;
+            display: block;
+        }
+        
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(40, 167, 69, 0.3);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .dashboard-header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 300;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .btn i {
+            margin-right: 8px;
+        }
+        
+        .content-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .card-header h3 {
+            margin: 0;
+            color: #333;
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .filter-select {
+            padding: 8px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            background: white;
+            transition: border-color 0.3s ease;
+        }
+        
+        .filter-select:focus {
+            outline: none;
+            border-color: #28a745;
+        }
+        
+        .search-input {
+            padding: 8px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            width: 300px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #28a745;
+        }
+        
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .users-table th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .users-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: middle;
+        }
+        
+        .users-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-details h5 {
+            margin: 0;
+            color: #333;
+            font-size: 1rem;
+        }
+        
+        .user-details p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .role-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .role-superadmin {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .role-globaladmin {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .role-pointadmin {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .role-operator {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.9rem;
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        
+        .btn-warning:hover {
+            background: #e0a800;
+            color: #212529;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+            color: white;
+        }
+        
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background: #138496;
+            color: white;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.3rem;
+        }
+        
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            opacity: 0.7;
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #28a745;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .modal-footer {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-radius: 0 0 15px 15px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 50px;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #28a745;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        /* CORRECTION : Utiliser @@ pour échapper dans Razor */
+        @@keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        
+        .pagination button {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        
+        .pagination button:hover {
+            background: #e9ecef;
+        }
+        
+        .pagination button.active {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+        
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .global-spinner {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .global-spinner-content {
+            background: white;
+            padding: 20px 40px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .global-spinner .spinner {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 15px;
+        }
+        
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2001;
+        }
+        
+        .toast {
+            margin-bottom: 10px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease-out;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .toast-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        
+        .toast-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        
+        /* CORRECTION : Utiliser @@ pour échapper dans Razor */
+        @@keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @@keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        @@keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
+        /* CORRECTION : Utiliser @@media au lieu de  */
+        @@media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .header-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .filters {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .users-table {
+                font-size: 0.9rem;
+            }
+            
+            .users-table th,
+            .users-table td {
+                padding: 10px 8px;
+            }
+            
+            .user-actions {
+                flex-direction: column;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+        }
+
+        @@media (max-width: 480px) {
+            .dashboard-header {
+                padding: 20px;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 2rem;
+            }
+            
+            .card-header {
+                padding: 15px 20px;
+            }
+            
+            .modal-body {
+                padding: 20px;
+            }
+            
+            .filters {
+                gap: 10px;
+            }
+            
+            .filter-select, .search-input {
+                width: 100%;
+            }
+        }
+        .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal[style*="display: block"] {
+    opacity: 1;
+}
+
+.modal.closing {
+    opacity: 0;
+}
+
+.modal-content {
+    background-color: white;
+    margin: 2% auto;
+    padding: 0;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: scale(0.9);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.modal[style*="display: block"] .modal-content {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.modal.closing .modal-content {
+    transform: scale(0.9);
+    opacity: 0;
+}
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1><i class="bi bi-people"></i> Gestion des Utilisateurs</h1>
+            <div class="header-actions">
+                <a href="@(User.IsInRole("SuperAdmin") ? "/SuperAdmin/Dashboard" : "/GlobalAdmin/Dashboard")" class="btn btn-primary">
+                    <i class="bi bi-arrow-left"></i> Retour
+                </a>
+                <button class="btn btn-success" onclick="openCreateModal()">
+                    <i class="bi bi-person-plus"></i> Nouvel Utilisateur
+                </button>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <div class="card-header">
+                <h3><i class="bi bi-list"></i> Liste des Utilisateurs</h3>
+                <div class="filters">
+                    <select id="roleFilter" class="filter-select" onchange="filterUsers()">
+                        <option value="">Tous les rôles</option>
+                        <option value="SuperAdmin">Super Admin</option>
+                        <option value="AgencyGlobalAdmin">Global Admin</option>
+                        <option value="AgencyPointAdmin">Point Admin</option>
+                        <option value="AgencyOperator">Opérateur</option>
+                    </select>
+                    <select id="statusFilter" class="filter-select" onchange="filterUsers()">
+                        <option value="">Tous les statuts</option>
+                        <option value="true">Actifs</option>
+                        <option value="false">Inactifs</option>
+                    </select>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Rechercher un utilisateur..." onkeyup="searchUsers()">
+                </div>
+            </div>
+            
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Chargement des utilisateurs...</p>
+            </div>
+            
+            <div id="usersContainer">
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>Utilisateur</th>
+                            <th>Rôle</th>
+                            <th>Agence</th>
+                            <th>Statut</th>
+                            <th>Dernière connexion</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <!-- Les utilisateurs seront chargés ici -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="pagination" class="pagination">
+                <!-- La pagination sera générée ici -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de création/modification d'utilisateur -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Nouvel Utilisateur</h3>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="userForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName"><i class="bi bi-person"></i> Prénom</label>
+                            <input type="text" id="firstName" name="firstName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName"><i class="bi bi-person"></i> Nom</label>
+                            <input type="text" id="lastName" name="lastName" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email"><i class="bi bi-envelope"></i> Email</label>
+                        <input type="email" id="email" name="email" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password"><i class="bi bi-lock"></i> Mot de passe</label>
+                        <input type="password" id="password" name="password" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phoneNumber"><i class="bi bi-telephone"></i> Téléphone</label>
+                        <input type="tel" id="phoneNumber" name="phoneNumber" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="role"><i class="bi bi-shield"></i> Rôle</label>
+                        <select id="role" name="role" class="form-control" required onchange="toggleAgencyFields()">
+                            <option value="">Sélectionner un rôle</option>
+                            <option value="SuperAdmin">Super Admin</option>
+                            <option value="AgencyGlobalAdmin">Global Admin</option>
+                            <option value="AgencyPointAdmin">Point Admin</option>
+                            <option value="AgencyOperator">Opérateur</option>
+                        </select>
+                    </div>
+                    
+                    <div id="agencyFields" style="display: none;">
+                        <div class="form-group">
+                            <label for="agencyId"><i class="bi bi-building"></i> Agence</label>
+                            <select id="agencyId" name="agencyId" class="form-control">
+                                <option value="">Sélectionner une agence</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="agencyPointId"><i class="bi bi-geo-alt"></i> Point d'Agence</label>
+                            <select id="agencyPointId" name="agencyPointId" class="form-control">
+                                <option value="">Sélectionner un point d'agence</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+                <button type="button" class="btn btn-success" onclick="saveUser()">
+                    <i class="bi bi-check-circle"></i> Enregistrer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Spinner global -->
+    <div id="globalSpinner" class="global-spinner">
+        <div class="global-spinner-content">
+            <div class="spinner"></div>
+            <p id="spinnerText">Enregistrement en cours...</p>
+        </div>
+    </div>
+
+    <!-- Conteneur des notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script>
+        let users = [];
+        let agencies = [];
+        let agencyPoints = [];
+        let currentUserId = null;
+        let currentPage = 1;
+        const pageSize = 10;
+
+        // Charger les données au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUsers();
+            loadAgencies();
+            loadAgencyPoints();
+
+            // Correction : appliquer le filtre et la recherche ensemble
+            document.getElementById('roleFilter').addEventListener('change', applyFiltersAndSearch);
+            document.getElementById('statusFilter').addEventListener('change', applyFiltersAndSearch);
+            document.getElementById('searchInput').addEventListener('keyup', applyFiltersAndSearch);
+        });
+
+        async function loadUsers() {
+            const loading = document.getElementById('loading');
+            const container = document.getElementById('usersTableBody');
+            
+            loading.style.display = 'block';
+            container.innerHTML = '';
+
+            try {
+                const response = await fetch(`/SuperAdmin/api/users?page=${currentPage}&pageSize=${pageSize}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    users = data.data || [];
+                    applyFiltersAndSearch();
+                    updatePagination(data.total, data.page, data.pageSize);
+                } else {
+                    showToast('Erreur lors du chargement des utilisateurs', false);
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showToast('Erreur de connexion', false);
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        async function loadAgencies() {
+            try {
+                const response = await fetch('/SuperAdmin/api/agencies');
+                if (response.ok) {
+                    agencies = await response.json();
+                    updateAgencySelect();
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des agences:', error);
+            }
+        }
+
+        async function loadAgencyPoints() {
+            try {
+                const response = await fetch('/SuperAdmin/api/agency-points');
+                if (response.ok) {
+                    agencyPoints = await response.json();
+                    updateAgencyPointSelect();
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des points:', error);
+            }
+        }
+
+        function updateAgencySelect() {
+            const agencySelect = document.getElementById('agencyId');
+            agencySelect.innerHTML = '<option value="">Sélectionner une agence</option>';
+            agencies.forEach(agency => {
+                agencySelect.innerHTML += `<option value="${agency.id || agency.Id}">${agency.name || agency.Name}</option>`;
+            });
+            agencySelect.onchange = updateAgencyPointSelect;
+        }
+
+        function updateAgencyPointSelect() {
+            const agencySelect = document.getElementById('agencyId');
+            const pointSelect = document.getElementById('agencyPointId');
+            const selectedAgencyId = agencySelect.value;
+            pointSelect.innerHTML = '<option value="">Sélectionner un point d\'agence</option>';
+
+            if (!selectedAgencyId) return;
+
+            const points = (agencyPoints || []).filter(p =>
+                String(p.agencyId || p.AgencyId) === String(selectedAgencyId)
+            );
+
+            points.forEach(p => {
+                pointSelect.innerHTML += `<option value="${p.id || p.Id}">${p.name || p.Name}</option>`;
+            });
+        }
+
+        function displayUsers(usersToShow) {
+            const container = document.getElementById('usersTableBody');
+            
+            if (usersToShow.length === 0) {
+                container.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <i class="bi bi-people"></i>
+                            <h3>Aucun utilisateur trouvé</h3>
+                            <p>Commencez par créer votre premier utilisateur</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            container.innerHTML = usersToShow.map(user => {
+                const initials = `${(user.firstName?.charAt(0) || 'U').toUpperCase()}${(user.lastName?.charAt(0) || 'S').toUpperCase()}`;
+                return `
+                    <tr>
+                        <td>
+                            <div class="user-info">
+                                <div class="user-avatar">${initials}</div>
+                                <div class="user-details">
+                                    <h5>${user.firstName || ''} ${user.lastName || ''}</h5>
+                                    <p>${user.email || ''}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            ${user.roles && user.roles.length ? user.roles.map(r => `
+                                <span class="role-badge ${
+                                    r === 'SuperAdmin' ? 'role-superadmin' :
+                                    r === 'AgencyGlobalAdmin' ? 'role-globaladmin' :
+                                    r === 'AgencyPointAdmin' ? 'role-pointadmin' : 'role-operator'
+                                }">${r}</span>
+                            `).join(' ') : ''}
+                        </td>
+                        <td>${user.agencyName ?? '-'}</td>
+                        <td>
+                            <span class="status-badge ${user.isActive ? 'status-active' : 'status-inactive'}">
+                                ${user.isActive ? 'Actif' : 'Inactif'}
+                            </span>
+                        </td>
+                        <td>${user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleString('fr-FR') : '-'}</td>
+                        <td>
+                            <div class="user-actions">
+                                <button class="btn btn-info btn-sm" onclick="editUser('${user.id}')">
+                                    <i class="bi bi-pencil"></i> Modifier
+                                </button>
+                                <button class="btn ${user.isActive ? 'btn-danger' : 'btn-success'} btn-sm" 
+                                        onclick="toggleUserStatus('${user.id}', ${user.isActive})">
+                                    <i class="bi bi-${user.isActive ? 'pause' : 'play'}"></i> 
+                                    ${user.isActive ? 'Désactiver' : 'Activer'}
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Correction : appliquer filtre ET recherche ensemble
+        function applyFiltersAndSearch() {
+            const term = (document.getElementById('searchInput').value || '').toLowerCase();
+            const role = (document.getElementById('roleFilter').value || '').toLowerCase();
+            const status = document.getElementById('statusFilter').value;
+            let filtered = users;
+
+            if (role) {
+                filtered = filtered.filter(u => (u.roles || []).some(r => r.toLowerCase() === role));
+            }
+            if (status) {
+                filtered = filtered.filter(u => String(u.isActive) === status);
+            }
+            if (term) {
+                filtered = filtered.filter(u =>
+                    ((u.firstName || '') + ' ' + (u.lastName || '')).toLowerCase().includes(term) ||
+                    (u.email || '').toLowerCase().includes(term) ||
+                    (u.agencyName || '').toLowerCase().includes(term)
+                );
+            }
+            displayUsers(filtered);
+        }
+
+        function updatePagination(total, page, size) {
+            const pages = Math.max(1, Math.ceil(total / size));
+            const pag = document.getElementById('pagination');
+            let html = '';
+            for (let p = 1; p <= pages; p++) {
+                html += `<button class="${p===page?'active':''}" onclick="goPage(${p})">${p}</button>`;
+            }
+            pag.innerHTML = html;
+        }
+
+        function goPage(p) {
+            currentPage = p;
+            loadUsers();
+        }
+
+        function openCreateModal() {
+            currentUserId = null;
+            document.getElementById('modalTitle').textContent = 'Nouvel Utilisateur';
+            document.getElementById('userForm').reset();
+            document.getElementById('agencyFields').style.display = 'none';
+            document.getElementById('userModal').style.display = 'block';
+        }
+
+        function editUser(id) {
+            const u = users.find(x => x.id === id);
+            if (!u) return;
+            currentUserId = id;
+            document.getElementById('modalTitle').textContent = 'Modifier l\'Utilisateur';
+            document.getElementById('firstName').value = u.firstName || '';
+            document.getElementById('lastName').value = u.lastName || '';
+            document.getElementById('email').value = u.email || '';
+            document.getElementById('password').value = '';
+            document.getElementById('phoneNumber').value = u.phoneNumber || '';
+            const role = (u.roles && u.roles.length) ? u.roles[0] : '';
+            document.getElementById('role').value = role;
+            toggleAgencyFields();
+            document.getElementById('agencyId').value = u.agencyId || '';
+            updateAgencyPointSelect();
+            document.getElementById('agencyPointId').value = u.agencyPointId || '';
+            document.getElementById('userModal').style.display = 'block';
+        }
+
+        function toggleAgencyFields() {
+            const role = document.getElementById('role').value;
+            const needAgency = role === 'AgencyGlobalAdmin' || role === 'AgencyPointAdmin' || role === 'AgencyOperator';
+            document.getElementById('agencyFields').style.display = needAgency ? 'block' : 'none';
+            if (needAgency) {
+                updateAgencyPointSelect();
+            }
+        }
+
+        async function saveUser() {
+            const form = document.getElementById('userForm');
+            const data = Object.fromEntries(new FormData(form));
+
+            // Validation
+            if (!data.firstName || !data.lastName || !data.email || !data.password) {
+                showToast('Veuillez renseigner tous les champs obligatoires', false);
+                return;
+            }
+
+            // Afficher le spinner global
+            const spinner = document.getElementById('globalSpinner');
+            spinner.style.display = 'flex';
+
+            try {
+                const payload = {
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    email: data.email,
+                    password: data.password,
+                    phoneNumber: data.phoneNumber || '',
+                    role: data.role,
+                    agencyId: data.agencyId || null,
+                    agencyPointId: data.agencyPointId || null
+                };
+
+                const url = currentUserId ? `/SuperAdmin/api/users/${currentUserId}` : '/SuperAdmin/api/users';
+                const method = currentUserId ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    showToast('Utilisateur enregistré avec succès', true);
+                    closeModal();
+                    await loadUsers();
+                } else {
+                    const error = await response.json();
+                    showToast(error.message || 'Erreur lors de l\'enregistrement', false);
+                }
+            } catch (error) {
+                showToast('Erreur de connexion au serveur', false);
+            } finally {
+                // Cacher le spinner
+                spinner.style.display = 'none';
+            }
+        }
+
+        async function toggleUserStatus(id, isActive) {
+            try {
+                const res = await fetch(`/SuperAdmin/api/users/${id}/toggle-status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ isActive: !isActive })
+                });
+                if (res.ok) {
+                    await loadUsers();
+                    showToast(`Utilisateur ${!isActive ? 'activé' : 'désactivé'} avec succès`, true);
+                } else {
+                    showToast('Erreur lors du changement de statut', false);
+                }
+            } catch(e) {
+                showToast('Erreur de connexion', false);
+            }
+        }
+
+        function closeModal() {
+    const modal = document.getElementById('userModal');
+    
+    // Ajouter une classe pour l'animation de fermeture
+    modal.classList.add('closing');
+    
+    setTimeout(() => {
+        modal.style.display = 'none';
+        modal.classList.remove('closing');
+        // Réinitialiser le formulaire
+        document.getElementById('userForm').reset();
+        document.getElementById('agencyFields').style.display = 'none';
+    }, 300);
+}
+
+        function showToast(message, success) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${success ? 'toast-success' : 'toast-error'}`;
+            toast.innerHTML = `
+                <i class="bi ${success ? 'bi-check-circle' : 'bi-exclamation-triangle'}"></i>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+
+            // Animation de sortie
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease-out forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        window.onclick = function(e){
+            const modal = document.getElementById('userModal');
+            if(e.target === modal){ 
+                closeModal(); 
+            }
+        }
+    </script>
+</body>
+</html>

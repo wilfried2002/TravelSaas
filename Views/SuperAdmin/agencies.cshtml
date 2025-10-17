@@ -1,0 +1,1137 @@
+@{ Layout = null; }
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Agences - Super Admin</title>
+    <link rel="stylesheet" href="~/css/site.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --border-color: #e9ecef;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-color);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .dashboard-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .dashboard-header h1 {
+            margin: 0;
+            font-size: 2.2rem;
+            font-weight: 300;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .btn-primary {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 1.5px solid rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn-primary:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+        
+        .content-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background: var(--bg-color);
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .card-header h3 {
+            margin: 0;
+            color: var(--text-primary);
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .search-bar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .search-input {
+            padding: 8px 14px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            width: 280px;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .agencies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 18px;
+            padding: 25px;
+        }
+        
+        .agency-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            padding: 22px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .agency-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            border-color: var(--primary-color);
+        }
+        
+        .agency-card.inactive {
+            opacity: 0.7;
+            border-color: var(--danger-color);
+        }
+        
+        .agency-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            gap: 10px;
+        }
+        
+        .agency-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+            line-height: 1.3;
+        }
+        
+        .badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .agency-info {
+            margin-bottom: 18px;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            gap: 10px;
+        }
+        
+        .info-item i {
+            color: var(--primary-color);
+            width: 16px;
+            flex-shrink: 0;
+        }
+        
+        .agency-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 18px;
+            padding: 14px;
+            background: var(--bg-color);
+            border-radius: 8px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .stat-number {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            display: block;
+            line-height: 1;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+        
+        .agency-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-sm {
+            padding: 6px 10px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            flex: 1;
+            min-width: 80px;
+            justify-content: center;
+        }
+        
+        .btn-warning { 
+            background: var(--warning-color); 
+            color: #212529; 
+        }
+        .btn-warning:hover { 
+            background: #e0a800; 
+        }
+        .btn-danger { 
+            background: var(--danger-color); 
+            color: white; 
+        }
+        .btn-danger:hover { 
+            background: #c82333; 
+        }
+        .btn-info { 
+            background: var(--info-color); 
+            color: white; 
+        }
+        .btn-info:hover { 
+            background: #138496; 
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.2s ease;
+        }
+        
+        .modal-content {
+            background-color: var(--card-bg);
+            margin: 2% auto;
+            border-radius: 12px;
+            width: 95%;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            max-height: 90vh;
+            overflow: hidden;
+            animation: slideUp 0.3s ease;
+        }
+        
+        .modal-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .close {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+            line-height: 1;
+        }
+        
+        .close:hover {
+            opacity: 0.8;
+        }
+        
+        .modal-body {
+            padding: 25px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        
+        .form-group {
+            margin-bottom: 18px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .modal-footer {
+            padding: 18px 25px;
+            background: var(--bg-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Loading States */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 50px 20px;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        .global-spinner {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+        
+        .global-spinner-content {
+            background: white;
+            padding: 25px 35px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .global-spinner .spinner {
+            width: 44px;
+            height: 44px;
+            margin-bottom: 12px;
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2001;
+        }
+        
+        .toast {
+            margin-bottom: 10px;
+            padding: 14px 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease-out;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            min-width: 280px;
+        }
+        
+        .toast-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid var(--success-color);
+        }
+        
+        .toast-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid var(--danger-color);
+        }
+
+        /* Side Panel */
+        .side-panel {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 420px;
+            height: 100%;
+            background: white;
+            z-index: 2000;
+            box-shadow: -5px 0 20px rgba(0,0,0,0.15);
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .side-panel.open {
+            right: 0;
+        }
+        
+        .side-panel-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1999;
+        }
+        
+        .side-panel-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .side-panel-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .side-panel-body {
+            padding: 25px;
+            color: var(--text-primary);
+            overflow-y: auto;
+            max-height: calc(100vh - 80px);
+        }
+
+        .side-panel-body .form-group {
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .side-panel-body .form-group:last-child {
+            border-bottom: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-secondary);
+        }
+        
+        .empty-state i {
+            font-size: 3.5rem;
+            color: #dee2e6;
+            margin-bottom: 15px;
+            opacity: 0.7;
+        }
+
+        .agencies-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 colonnes fixes */
+    gap: 20px;
+    padding: 30px;
+}
+
+/* Responsive */
+@@media (max-width: 1200px) {
+    .agencies-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 colonnes sur écrans moyens */
+    }
+}
+
+@@media (max-width: 768px) {
+    .agencies-grid {
+        grid-template-columns: 1fr; /* 1 colonne sur mobile */
+        gap: 15px;
+        padding: 20px;
+    }
+}
+
+        /* Animations */
+        @@keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @@keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @@keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @@keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        /* Responsive */
+        @@media (max-width: 1024px) {
+            .dashboard-container {
+                padding: 15px;
+            }
+            
+            .agencies-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 15px;
+                padding: 20px;
+            }
+        }
+        
+        @@media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px;
+            }
+            
+            .header-actions {
+                justify-content: center;
+                width: 100%;
+            }
+            
+            .search-bar {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .agencies-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .agency-actions {
+                flex-direction: column;
+            }
+            
+            .side-panel {
+                width: 100%;
+            }
+            
+            .modal-content {
+                margin: 5% auto;
+                width: 98%;
+            }
+        }
+
+        @@media (max-width: 480px) {
+            .dashboard-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .card-header {
+                padding: 15px 20px;
+            }
+            
+            .modal-body {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1><i class="bi bi-building"></i> Gestion des Agences</h1>
+            <div class="header-actions">
+                <a href="/SuperAdmin/Dashboard" class="btn btn-primary">
+                    <i class="bi bi-arrow-left"></i> Retour
+                </a>
+                <button class="btn btn-success" onclick="AgencyManager.openCreateModal()">
+                    <i class="bi bi-plus-circle"></i> Nouvelle Agence
+                </button>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <div class="card-header">
+                <h3><i class="bi bi-list"></i> Liste des Agences</h3>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Rechercher une agence..." 
+                           oninput="AgencyManager.debouncedSearch()">
+                </div>
+            </div>
+            
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Chargement des agences...</p>
+            </div>
+            
+            <div id="agenciesContainer" class="agencies-grid">
+                <!-- Les agences seront chargées ici -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de création/modification d'agence -->
+    <div id="agencyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Nouvelle Agence</h3>
+                <span class="close" onclick="ModalManager.closeModal('agencyModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="agencyForm">
+                    <div class="form-group">
+                        <label for="agencyName"><i class="bi bi-building"></i> Nom de l'agence</label>
+                        <input type="text" id="agencyName" name="name" class="form-control" required maxlength="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="agencyEmail"><i class="bi bi-envelope"></i> Email</label>
+                        <input type="email" id="agencyEmail" name="email" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="agencyPhone"><i class="bi bi-telephone"></i> Téléphone</label>
+                        <input type="tel" id="agencyPhone" name="phone" class="form-control" required maxlength="20">
+                    </div>
+                    <div class="form-group">
+                        <label for="agencyAddress"><i class="bi bi-geo-alt"></i> Adresse</label>
+                        <textarea id="agencyAddress" name="address" class="form-control" rows="3" required maxlength="255"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="ModalManager.closeModal('agencyModal')">Annuler</button>
+                <button type="button" class="btn btn-success" onclick="AgencyManager.saveAgency()">
+                    <i class="bi bi-check-circle"></i> Enregistrer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Spinner global -->
+    <div id="globalSpinner" class="global-spinner">
+        <div class="global-spinner-content">
+            <div class="spinner"></div>
+            <p id="spinnerText">Traitement en cours...</p>
+        </div>
+    </div>
+
+    <!-- Conteneur des notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script>
+        // Gestionnaire de modals
+        const ModalManager = {
+            openModal(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
+                }
+            },
+            
+            closeModal(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            },
+            
+            initModalEvents() {
+                document.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('modal')) {
+                        this.closeModal(e.target.id);
+                    }
+                });
+                
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        document.querySelectorAll('.modal').forEach(modal => {
+                            this.closeModal(modal.id);
+                        });
+                        SidePanelManager.closePanel();
+                    }
+                });
+            }
+        };
+
+        // Gestionnaire du panneau latéral
+        const SidePanelManager = {
+            openPanel(agency) {
+                const panel = document.createElement('div');
+                panel.className = 'side-panel';
+                panel.innerHTML = `
+                    <div class="side-panel-overlay" onclick="SidePanelManager.closePanel()"></div>
+                    <div class="side-panel-content">
+                        <div class="side-panel-header">
+                            <h3><i class="bi bi-building"></i> Détails de l'Agence</h3>
+                            <span class="close" onclick="SidePanelManager.closePanel()">&times;</span>
+                        </div>
+                        <div class="side-panel-body">
+                            <div class="form-group">
+                                <label><i class="bi bi-building"></i> Nom</label>
+                                <div>${agency.name || '-'}</div>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="bi bi-envelope"></i> Email</label>
+                                <div>${agency.email || '-'}</div>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="bi bi-telephone"></i> Téléphone</label>
+                                <div>${agency.phone || '-'}</div>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="bi bi-geo-alt"></i> Adresse</label>
+                                <div>${agency.address || '-'}</div>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="bi bi-calendar"></i> Date de création</label>
+                                <div>${new Date(agency.createdAt).toLocaleDateString('fr-FR')}</div>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="bi bi-shield"></i> Statut</label>
+                                <div>
+                                    <span class="badge ${agency.isActive ? 'status-active' : 'status-inactive'}">
+                                        ${agency.isActive ? 'Actif' : 'Inactif'}
+                                    </span>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="agency-stats">
+                                <div class="stat-item">
+                                    <div class="stat-number">${agency.agencyPointsCount ?? 0}</div>
+                                    <div class="stat-label">Points d'agence</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-number">${agency.usersCount ?? 0}</div>
+                                    <div class="stat-label">Utilisateurs</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.body.appendChild(panel);
+                setTimeout(() => panel.classList.add('open'), 10);
+            },
+
+            closePanel() {
+                const panel = document.querySelector('.side-panel');
+                if (panel) {
+                    panel.classList.remove('open');
+                    setTimeout(() => panel.remove(), 300);
+                }
+            }
+        };
+
+        // Gestionnaire principal des agences
+        const AgencyManager = {
+            agencies: [],
+            currentAgencyId: null,
+            searchTimeout: null,
+
+            init() {
+                this.loadAgencies();
+                ModalManager.initModalEvents();
+            },
+
+            async loadAgencies() {
+                const loading = document.getElementById('loading');
+                const container = document.getElementById('agenciesContainer');
+                
+                loading.style.display = 'block';
+                container.innerHTML = '';
+
+                try {
+                    const response = await fetch('/SuperAdmin/api/agencies');
+                    if (response.ok) {
+                        this.agencies = await response.json();
+                        this.displayAgencies(this.agencies);
+                    } else {
+                        this.showToast('Erreur lors du chargement des agences', false);
+                    }
+                } catch (error) {
+                    console.error('Erreur:', error);
+                    this.showToast('Erreur de connexion', false);
+                } finally {
+                    loading.style.display = 'none';
+                }
+            },
+
+            displayAgencies(agenciesToShow) {
+                const container = document.getElementById('agenciesContainer');
+                
+                if (!agenciesToShow || agenciesToShow.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="bi bi-building"></i>
+                            <h3>Aucune agence trouvée</h3>
+                            <p>Commencez par créer votre première agence</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = agenciesToShow.map(agency => {
+                    const id = agency.id || agency.Id;
+                    const name = agency.name || agency.Name;
+                    const email = agency.email || agency.Email || '-';
+                    const phone = agency.phone || agency.Phone || '-';
+                    const address = agency.address || agency.Address || '-';
+                    const isActive = agency.isActive ?? agency.IsActive;
+                    const createdAt = agency.createdAt || agency.CreatedAt;
+                    const pointsCount = agency.agencyPointsCount ?? agency.AgencyPointsCount ?? 0;
+                    const usersCount = agency.usersCount ?? agency.UsersCount ?? 0;
+
+                    return `
+                        <div class="agency-card ${!isActive ? 'inactive' : ''}">
+                            <div class="agency-header">
+                                <h4 class="agency-name">${name}</h4>
+                                <span class="badge ${isActive ? 'status-active' : 'status-inactive'}">
+                                    ${isActive ? 'Actif' : 'Inactif'}
+                                </span>
+                            </div>
+                            
+                            <div class="agency-info">
+                                <div class="info-item">
+                                    <i class="bi bi-envelope"></i>
+                                    <span>${email}</span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="bi bi-telephone"></i>
+                                    <span>${phone}</span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="bi bi-geo-alt"></i>
+                                    <span>${address}</span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="bi bi-calendar"></i>
+                                    <span>Créé le ${new Date(createdAt).toLocaleDateString('fr-FR')}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="agency-stats">
+                                <div class="stat-item">
+                                    <div class="stat-number">${pointsCount}</div>
+                                    <div class="stat-label">Points</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-number">${usersCount}</div>
+                                    <div class="stat-label">Utilisateurs</div>
+                                </div>
+                            </div>
+                            
+                            <div class="agency-actions">
+                                <button class="btn btn-info btn-sm" onclick="AgencyManager.viewAgencyDetails('${id}')">
+                                    <i class="bi bi-eye"></i> Voir
+                                </button>
+                                <button class="btn btn-warning btn-sm" onclick="AgencyManager.editAgency('${id}')">
+                                    <i class="bi bi-pencil"></i> Modifier
+                                </button>
+                                <button class="btn ${isActive ? 'btn-danger' : 'btn-success'} btn-sm" 
+                                        onclick="AgencyManager.toggleAgencyStatus('${id}', ${isActive})">
+                                    <i class="bi bi-${isActive ? 'pause' : 'play'}"></i> 
+                                    ${isActive ? 'Désactiver' : 'Activer'}
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            debouncedSearch() {
+                clearTimeout(this.searchTimeout);
+                this.searchTimeout = setTimeout(() => this.searchAgencies(), 300);
+            },
+
+            searchAgencies() {
+                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                const filteredAgencies = this.agencies.filter(agency => {
+                    const name = (agency.name || agency.Name || '').toLowerCase();
+                    const email = (agency.email || agency.Email || '').toLowerCase();
+                    const address = (agency.address || agency.Address || '').toLowerCase();
+                    return name.includes(searchTerm) || email.includes(searchTerm) || address.includes(searchTerm);
+                });
+                this.displayAgencies(filteredAgencies);
+            },
+
+            openCreateModal() {
+                this.currentAgencyId = null;
+                document.getElementById('modalTitle').textContent = 'Nouvelle Agence';
+                document.getElementById('agencyForm').reset();
+                ModalManager.openModal('agencyModal');
+            },
+
+            editAgency(agencyId) {
+                const agency = this.agencies.find(a => (a.id || a.Id) === agencyId);
+                if (!agency) return;
+
+                this.currentAgencyId = agencyId;
+                document.getElementById('modalTitle').textContent = 'Modifier l\'Agence';
+                document.getElementById('agencyName').value = agency.name || agency.Name || '';
+                document.getElementById('agencyEmail').value = agency.email || agency.Email || '';
+                document.getElementById('agencyPhone').value = agency.phone || agency.Phone || '';
+                document.getElementById('agencyAddress').value = agency.address || agency.Address || '';
+                ModalManager.openModal('agencyModal');
+            },
+
+            async viewAgencyDetails(agencyId) {
+                try {
+                    const base = location.pathname.toLowerCase().startsWith('/globaladmin') 
+                        ? '/GlobalAdmin' 
+                        : '/SuperAdmin';
+
+                    const response = await fetch(`${base}/api/agencies/${agencyId}`);
+                    if (!response.ok) {
+                        this.showToast('Erreur lors du chargement des détails', false);
+                        return;
+                    }
+
+                    const agency = await response.json();
+                    SidePanelManager.openPanel(agency);
+
+                } catch (error) {
+                    console.error('Erreur:', error);
+                    this.showToast('Erreur lors du chargement des détails', false);
+                }
+            },
+
+            async saveAgency() {
+                const form = document.getElementById('agencyForm');
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData);
+
+                // Validation
+                if (!data.name?.trim() || !data.email?.trim() || !data.phone?.trim() || !data.address?.trim()) {
+                    this.showToast('Veuillez remplir tous les champs obligatoires', false);
+                    return;
+                }
+
+                // Afficher le spinner global
+                this.showGlobalSpinner(this.currentAgencyId ? 'Modification en cours...' : 'Création en cours...');
+
+                try {
+                    const url = this.currentAgencyId ? `/SuperAdmin/api/agencies/${this.currentAgencyId}` : '/SuperAdmin/api/agencies';
+                    const method = this.currentAgencyId ? 'PUT' : 'POST';
+                    
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (response.ok) {
+                        this.showToast(
+                            this.currentAgencyId ? 'Agence modifiée avec succès' : 'Agence créée avec succès', 
+                            true
+                        );
+                        ModalManager.closeModal('agencyModal');
+                        await this.loadAgencies();
+                    } else {
+                        const error = await response.json();
+                        this.showToast(error.message || 'Erreur lors de la sauvegarde', false);
+                    }
+                } catch (error) {
+                    console.error('Erreur:', error);
+                    this.showToast('Erreur de connexion', false);
+                } finally {
+                    this.hideGlobalSpinner();
+                }
+            },
+
+            async toggleAgencyStatus(agencyId, currentStatus) {
+                this.showGlobalSpinner('Changement de statut...');
+
+                try {
+                    const response = await fetch(`/SuperAdmin/api/agencies/${agencyId}/toggle-status`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ isActive: !currentStatus })
+                    });
+
+                    if (response.ok) {
+                        this.showToast(`Agence ${!currentStatus ? 'activée' : 'désactivée'} avec succès`, true);
+                        await this.loadAgencies();
+                    } else {
+                        this.showToast('Erreur lors de la modification du statut', false);
+                    }
+                } catch (error) {
+                    console.error('Erreur:', error);
+                    this.showToast('Erreur de connexion', false);
+                } finally {
+                    this.hideGlobalSpinner();
+                }
+            },
+
+            showGlobalSpinner(message = 'Traitement en cours...') {
+                const spinner = document.getElementById('globalSpinner');
+                const spinnerText = document.getElementById('spinnerText');
+                spinnerText.textContent = message;
+                spinner.style.display = 'flex';
+            },
+
+            hideGlobalSpinner() {
+                const spinner = document.getElementById('globalSpinner');
+                spinner.style.display = 'none';
+            },
+
+            showToast(message, success) {
+                const container = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = `toast ${success ? 'toast-success' : 'toast-error'}`;
+                toast.innerHTML = `
+                    <i class="bi ${success ? 'bi-check-circle' : 'bi-exclamation-triangle'}"></i>
+                    <span>${message}</span>
+                `;
+                
+                container.appendChild(toast);
+                toast.style.animation = 'slideIn 0.3s ease-out forwards';
+
+                setTimeout(() => {
+                    toast.style.animation = 'slideOut 0.3s ease-out forwards';
+                    setTimeout(() => toast.remove(), 300);
+                }, 4000);
+            }
+        };
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            AgencyManager.init();
+        });
+    </script>
+</body>
+</html>

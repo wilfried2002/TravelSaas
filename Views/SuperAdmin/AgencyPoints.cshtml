@@ -1,0 +1,589 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Points d'Agence - Super Admin</title>
+    <link rel="stylesheet" href="~/css/site.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: #f8f9fa;
+            min-height: 100vh;
+            display: block;
+        }
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .dashboard-header {
+            background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(254, 180, 123, 0.3);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .dashboard-header h1 {
+            margin: 0;
+            font-size: 2.2rem;
+            font-weight: 300;
+        }
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .btn i { margin-right: 8px; }
+        .btn-primary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        .btn-primary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+            color: white;
+            text-decoration: none;
+        }
+        .btn-success { background: #28a745; color: white; }
+        .btn-success:hover { background: #218838; transform: translateY(-1px); }
+        .btn-warning { background: #ffc107; color: #212529; }
+        .btn-warning:hover { background: #e0a800; color: #212529; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-danger:hover { background: #c82333; color: white; }
+        .content-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        .card-header {
+            background: #f8f9fa;
+            padding: 18px 24px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .card-header h3 {
+            margin: 0;
+            color: #333;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        .filters {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .filter-select, .search-input {
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            background: white;
+            transition: border-color 0.2s ease;
+        }
+        .filter-select:focus, .search-input:focus { outline: none; border-color: #ff7e5f; }
+        .points-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 18px;
+            padding: 20px;
+        }
+        .point-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 18px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        .point-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+            border-color: #feb47b;
+        }
+        .point-card.inactive { opacity: 0.85; border-color: #f8d7da; }
+        .point-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .point-name {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #333;
+            margin: 0;
+            line-height: 1.2;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+        .status-active { background: #d4edda; color: #155724; }
+        .status-inactive { background: #f8d7da; color: #721c24; }
+        .agency-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #fff3cd;
+            color: #856404;
+            border-radius: 999px;
+            padding: 2px 10px;
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+        }
+        .info-list { margin: 8px 0 14px 0; color: #555; }
+        .info-item { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
+        .info-item i { color: #ff7e5f; width: 16px; }
+        .card-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .loading { display: none; text-align: center; padding: 50px; }
+        .spinner {
+            border: 4px solid #f3f3f3; border-top: 4px solid #ff7e5f; border-radius: 50%;
+            width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 14px;
+        }
+
+        @@keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        .empty-state { text-align: center; padding: 60px 20px; color: #666; }
+        .empty-state i { font-size: 3rem; color: #ddd; margin-bottom: 10px; }
+        .modal {
+            display: none; position: fixed; z-index: 1000; inset: 0; background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background: white; margin: 4% auto; border-radius: 14px; width: 92%; max-width: 520px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2); overflow: hidden;
+        }
+        .modal-header {
+            background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+            color: white; padding: 18px 22px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-body { padding: 20px; }
+        .modal-footer { padding: 14px 20px; background: #f8f9fa; display: flex; justify-content: flex-end; gap: 8px; }
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; margin-bottom: 6px; color: #333; font-weight: 600; }
+        .form-control {
+            width: 100%; padding: 10px 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 0.98rem;
+        }
+        .form-control:focus { outline: none; border-color: #ff7e5f; }
+        .close { color: white; font-size: 26px; font-weight: bold; cursor: pointer; line-height: 1; }
+
+        @@media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .filters {
+                width: 100%;
+            }
+
+            .search-input {
+                flex: 1;
+                min-width: 220px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1><i class="bi bi-geo-alt"></i> Gestion des Points d'Agence</h1>
+            <div class="header-actions">
+                <a href="@(User.IsInRole("SuperAdmin") ? "/SuperAdmin/Dashboard" : "/GlobalAdmin/Dashboard")" class="btn btn-primary">
+                    <i class="bi bi-arrow-left"></i> Retour
+                </a>
+                <button class="btn btn-success" onclick="openCreateModal()">
+                    <i class="bi bi-plus-circle"></i> Nouveau Point
+                </button>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <div class="card-header">
+                <h3><i class="bi bi-list"></i> Liste des Points</h3>
+                <div class="filters">
+                    <select id="agencyFilter" class="filter-select" onchange="applyFilters()">
+                        <option value="">Toutes les agences</option>
+                    </select>
+                    <select id="statusFilter" class="filter-select" onchange="applyFilters()">
+                        <option value="">Tous les statuts</option>
+                        <option value="true">Actifs</option>
+                        <option value="false">Inactifs</option>
+                    </select>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Rechercher un point..." oninput="applyFilters()">
+                </div>
+            </div>
+
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Chargement des points...</p>
+            </div>
+
+            <div id="pointsContainer" class="points-grid"></div>
+        </div>
+    </div>
+
+    <!-- Modal création point -->
+    <div id="pointModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Nouveau Point d'Agence</h3>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="pointForm">
+                    <div class="form-group">
+                        <label for="pointName"><i class="bi bi-geo-alt"></i> Nom du point</label>
+                        <input type="text" id="pointName" name="name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pointEmail"><i class="bi bi-envelope"></i> Email</label>
+                        <input type="email" id="pointEmail" name="email" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="pointPhone"><i class="bi bi-telephone"></i> Téléphone</label>
+                        <input type="tel" id="pointPhone" name="phone" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pointAddress"><i class="bi bi-geo"></i> Adresse</label>
+                        <textarea id="pointAddress" name="address" class="form-control" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="pointAgencyId"><i class="bi bi-building"></i> Agence</label>
+                        <select id="pointAgencyId" name="agencyId" class="form-control" required>
+                            <option value="">Sélectionner une agence</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" onclick="closeModal()">Annuler</button>
+                <button type="button" class="btn btn-success" onclick="savePoint()">
+                    <i class="bi bi-check-circle"></i> Enregistrer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    const apiBase = location.pathname.startsWith('/GlobalAdmin')
+            ? '/GlobalAdmin/api'
+            : '/SuperAdmin/api';
+        let points = [];
+        let agencies = [];
+        let filteredPoints = [];
+
+        document.addEventListener('DOMContentLoaded', function () {
+            loadAgencies().then(() => loadPoints());
+        });
+
+        async function loadAgencies() {
+            try {
+                const res = await fetch(`${apiBase}/agencies`);
+                if (res.ok) {
+                    agencies = await res.json();
+                    populateAgencyFilters();
+                }
+            } catch (e) {
+                console.error(e);
+                showToast('Erreur lors du chargement des agences', false);
+            }
+        }
+
+        function populateAgencyFilters() {
+            const agencyFilter = document.getElementById('agencyFilter');
+            const pointAgencySelect = document.getElementById('pointAgencyId');
+            agencyFilter.innerHTML = '<option value="">Toutes les agences</option>';
+            pointAgencySelect.innerHTML = '<option value="">Sélectionner une agence</option>';
+
+            agencies.forEach(a => {
+                const id = a.id ?? a.Id;
+                const name = a.name ?? a.Name;
+                agencyFilter.innerHTML += `<option value="${id}">${name}</option>`;
+                pointAgencySelect.innerHTML += `<option value="${id}">${name}</option>`;
+            });
+        }
+
+        async function loadPoints() {
+            const loading = document.getElementById('loading');
+            const container = document.getElementById('pointsContainer');
+            loading.style.display = 'block';
+            container.innerHTML = '';
+
+
+                try {
+                const res = await fetch(`${apiBase}/agency-points`);
+                if (res.ok) {
+                    points = await res.json();
+                    filteredPoints = points.slice();
+                    renderPoints(filteredPoints);
+                } else {
+                    showToast('Erreur lors du chargement des points', false);
+                }
+            } catch (e) {
+                console.error(e);
+                showToast('Erreur de connexion', false);
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        function applyFilters() {
+            const term = (document.getElementById('searchInput').value || '').toLowerCase();
+            const agencyId = document.getElementById('agencyFilter').value;
+            const status = document.getElementById('statusFilter').value; // 'true' | 'false' | ''
+
+            filteredPoints = points.filter(p => {
+                const name = (p.name ?? p.Name ?? '').toLowerCase();
+                const email = (p.email ?? p.Email ?? '').toLowerCase();
+                const phone = (p.phone ?? p.Phone ?? '').toLowerCase();
+                const address = (p.address ?? p.Address ?? '').toLowerCase();
+                const agencyName = (p.agencyName ?? p.AgencyName ?? '').toLowerCase();
+                const textOk = !term || [name, email, phone, address, agencyName].some(v => v.includes(term));
+                const agencyOk = !agencyId || String(p.agencyId ?? p.AgencyId) === String(agencyId);
+                const statusOk = !status || String(p.isActive ?? p.IsActive) === status;
+                return textOk && agencyOk && statusOk;
+            });
+
+            renderPoints(filteredPoints);
+        }
+
+        function renderPoints(list) {
+            const container = document.getElementById('pointsContainer');
+
+            if (!list || list.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="bi bi-geo-alt"></i>
+                        <h3>Aucun point trouvé</h3>
+                        <p>Créez votre premier point d'agence</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = list.map(p => {
+                const id = p.id ?? p.Id;
+                const name = p.name ?? p.Name ?? '-';
+                const email = p.email ?? p.Email ?? '-';
+                const phone = p.phone ?? p.Phone ?? '-';
+                const address = p.address ?? p.Address ?? '-';
+                const isActive = (p.isActive ?? p.IsActive) === true;
+                const createdAt = p.createdAt ?? p.CreatedAt;
+                const usersCount = p.usersCount ?? p.UsersCount ?? 0;
+                const agencyName = p.agencyName ?? p.AgencyName ?? '-';
+                const agencyId = p.agencyId ?? p.AgencyId;
+
+                return `
+                <div class="point-card ${!isActive ? 'inactive' : ''}">
+                    <div class="point-header">
+                        <h4 class="point-name">${name}</h4>
+                        <span class="badge ${isActive ? 'status-active' : 'status-inactive'}">
+                            ${isActive ? 'Actif' : 'Inactif'}
+                        </span>
+                    </div>
+                    <div class="agency-chip"><i class="bi bi-building"></i> ${agencyName}</div>
+                    <div class="info-list">
+                        <div class="info-item"><i class="bi bi-envelope"></i> <span>${email}</span></div>
+                        <div class="info-item"><i class="bi bi-telephone"></i> <span>${phone}</span></div>
+                        <div class="info-item"><i class="bi bi-geo"></i> <span>${address}</span></div>
+                        ${createdAt ? `<div class="info-item"><i class="bi bi-calendar"></i> <span>Créé le ${new Date(createdAt).toLocaleDateString('fr-FR')}</span></div>` : ''}
+                        <div class="info-item"><i class="bi bi-people"></i> <span>${usersCount} utilisateur(s)</span></div>
+                    </div>
+            <div class="card-actions">
+    <button class="btn btn-info btn-sm" onclick="viewPointDetails('${id}')">
+        <i class="bi bi-eye"></i> Voir
+    </button>
+    <button class="btn ${isActive ? 'btn-danger' : 'btn-success'} btn-sm"
+            onclick="togglePointStatus('${id}', ${isActive})">
+        <i class="bi bi-${isActive ? 'pause' : 'play'}"></i> ${isActive ? 'Désactiver' : 'Activer'}
+    </button>
+                <button class="btn btn-warning btn-sm" onclick="openEditModal('${id}')">
+                    <i class="bi bi-pencil"></i> Modifier
+                </button>
+</div>
+                </div>`;
+            }).join('');
+        }
+
+        async function viewPointDetails(id) {
+    const base = location.pathname.toLowerCase().startsWith('/globaladmin') ? '/GlobalAdmin' : '/SuperAdmin';
+    try {
+        const res = await fetch(`${base}/api/agency-points/${id}`);
+        if (!res.ok) { showToast('Erreur lors du chargement des détails', false); return; }
+        const p = await res.json();
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.style.display = 'block';
+        modal.innerHTML = `
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Détails du Point d'Agence</h3>
+            <span class="close" onclick="this.closest('.modal').remove()">&times;</span>
+          </div>
+          <div class="modal-body">
+            <div class="form-group"><label><i class="bi bi-geo-alt"></i> Nom</label><div>${p.name || '-'}</div></div>
+            <div class="form-group"><label><i class="bi bi-building"></i> Agence</label><div>${p.agencyName || '-'}</div></div>
+            <div class="form-group"><label><i class="bi bi-envelope"></i> Email</label><div>${p.email || '-'}</div></div>
+            <div class="form-group"><label><i class="bi bi-telephone"></i> Téléphone</label><div>${p.phone || '-'}</div></div>
+            <div class="form-group"><label><i class="bi bi-geo"></i> Adresse</label><div>${p.address || '-'}</div></div>
+            <div class="form-group"><label><i class="bi bi-calendar"></i> Créé le</label><div>${p.createdAt ? new Date(p.createdAt).toLocaleDateString('fr-FR') : '-'}</div></div>
+            <div class="agency-stats" style="margin-top:10px;">
+              <div class="stat-item"><div class="stat-number">${p.usersCount ?? 0}</div><div class="stat-label">Utilisateurs</div></div>
+              <div class="stat-item"><div class="stat-number">${p.reservationsCount ?? 0}</div><div class="stat-label">Réservations</div></div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="this.closest('.modal').remove()">Fermer</button>
+          </div>
+        </div>`;
+        document.body.appendChild(modal);
+    } catch (e) {
+        console.error(e);
+        showToast('Erreur de connexion', false);
+    }
+}
+
+        let currentPointId = null;
+        function openCreateModal() {
+            currentPointId = null;
+            document.getElementById('pointForm').reset();
+            document.getElementById('modalTitle').textContent = 'Nouveau Point d\'Agence';
+            document.getElementById('pointModal').style.display = 'block';
+        }
+
+        function openEditModal(id) {
+            const p = points.find(x => (x.id || x.Id) === id);
+            if (!p) return;
+            currentPointId = id;
+            document.getElementById('modalTitle').textContent = 'Modifier le Point d\'Agence';
+            document.getElementById('pointName').value = p.name || p.Name || '';
+            document.getElementById('pointEmail').value = p.email || p.Email || '';
+            document.getElementById('pointPhone').value = p.phone || p.Phone || '';
+            document.getElementById('pointAddress').value = p.address || p.Address || '';
+            document.getElementById('pointAgencyId').value = (p.agencyId || p.AgencyId) || '';
+            document.getElementById('pointModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('pointModal').style.display = 'none';
+        }
+
+        async function savePoint() {
+            const form = document.getElementById('pointForm');
+            const data = Object.fromEntries(new FormData(form));
+            // Adapter aux DTOs backend (Name, Address, Phone, Email, AgencyId)
+            const payload = {
+                name: data.name,
+                address: data.address,
+                phone: data.phone,
+                email: data.email || null,
+                agencyId: data.agencyId
+            };
+
+            if (!payload.name || !payload.address || !payload.phone || !payload.agencyId) {
+                showToast('Veuillez renseigner tous les champs obligatoires', false);
+                return;
+            }
+
+            try {
+                // bouton loading
+                const saveBtn = event?.target?.closest('button');
+                if (saveBtn) { saveBtn.disabled = true; saveBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Enregistrement...'; }
+                const url = currentPointId ? `${apiBase}/agency-points/${currentPointId}` : `${apiBase}/agency-points`;
+                const method = currentPointId ? 'PUT' : 'POST';
+                const res = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (res.ok) {
+                    closeModal();
+                    await loadPoints();
+                    showToast(currentPointId ? 'Point modifié avec succès' : 'Point créé avec succès', true);
+                } else {
+                    const err = await res.json().catch(() => ({}));
+                    showToast(err.message || 'Erreur lors de la création', false);
+                }
+            } catch (e) {
+                console.error(e);
+                showToast('Erreur de connexion', false);
+            } finally {
+                const saveBtn = event?.target?.closest('button');
+                if (saveBtn) { saveBtn.disabled = false; saveBtn.innerHTML = '<i class="bi bi-check-circle"></i> Enregistrer'; }
+            }
+        }
+
+        async function togglePointStatus(id, isActive) {
+            try {
+                const res = await fetch(`${apiBase}/agency-points/${id}/toggle-status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ isActive: !isActive })
+                });
+                if (res.ok) {
+                    await loadPoints();
+                    showToast(`Point ${!isActive ? 'activé' : 'désactivé'} avec succès`, true);
+                } else {
+                    showToast('Erreur lors du changement de statut', false);
+                }
+            } catch (e) {
+                console.error(e);
+                showToast('Erreur de connexion', false);
+            }
+        }
+
+        function showToast(message, success) {
+            const n = document.createElement('div');
+            n.style.cssText = `position:fixed;top:20px;right:20px;padding:12px 16px;border-radius:8px;z-index:1001;` +
+                (success ? `background:#d4edda;color:#155724;` : `background:#f8d7da;color:#721c24;`);
+            n.innerHTML = `<i class="bi ${success ? 'bi-check-circle' : 'bi-exclamation-triangle'}"></i> ${message}`;
+            document.body.appendChild(n);
+            setTimeout(() => n.remove(), 3200);
+        }
+
+        // Fermer le modal en cliquant à l'extérieur
+        window.onclick = function (e) {
+            const modal = document.getElementById('pointModal');
+            if (e.target === modal) { closeModal(); }
+        }
+    </script>
+</body>
+</html>
