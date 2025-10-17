@@ -10,18 +10,33 @@
     <link rel="stylesheet" href="~/css/site.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+            --light-bg: #f8f9fa;
+            --border-color: #e9ecef;
+            --text-dark: #333;
+            --text-muted: #666;
+        }
+
         body {
-            background: #f8f9fa;
+            background: var(--light-bg);
             min-height: 100vh;
             display: block;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
         .dashboard-container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
         }
+
         .dashboard-header {
-            background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+            background: var(--primary-gradient);
             color: white;
             padding: 30px;
             border-radius: 15px;
@@ -33,16 +48,19 @@
             gap: 15px;
             flex-wrap: wrap;
         }
+
         .dashboard-header h1 {
             margin: 0;
             font-size: 2.2rem;
             font-weight: 300;
         }
+
         .header-actions {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
         }
+
         .btn {
             padding: 10px 16px;
             border: none;
@@ -53,80 +71,104 @@
             align-items: center;
             font-weight: 500;
             transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
         }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
         .btn i { margin-right: 8px; }
         .btn-primary {
             background: rgba(255, 255, 255, 0.2);
             color: white;
             border: 2px solid rgba(255, 255, 255, 0.3);
         }
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             background: rgba(255, 255, 255, 0.3);
             transform: translateY(-1px);
             color: white;
             text-decoration: none;
         }
-        .btn-success { background: #28a745; color: white; }
-        .btn-success:hover { background: #218838; transform: translateY(-1px); }
-        .btn-warning { background: #ffc107; color: #212529; }
-        .btn-warning:hover { background: #e0a800; color: #212529; }
-        .btn-danger { background: #dc3545; color: white; }
-        .btn-danger:hover { background: #c82333; color: white; }
+        .btn-success { background: var(--success-color); color: white; }
+        .btn-success:hover:not(:disabled) { background: #218838; transform: translateY(-1px); }
+        .btn-warning { background: var(--warning-color); color: #212529; }
+        .btn-warning:hover:not(:disabled) { background: #e0a800; color: #212529; }
+        .btn-danger { background: var(--danger-color); color: white; }
+        .btn-danger:hover:not(:disabled) { background: #c82333; color: white; }
+        .btn-info { background: var(--info-color); color: white; }
+        .btn-info:hover:not(:disabled) { background: #138496; color: white; }
+
         .content-card {
             background: white;
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.08);
             overflow: hidden;
         }
+
         .card-header {
-            background: #f8f9fa;
+            background: var(--light-bg);
             padding: 18px 24px;
-            border-bottom: 1px solid #e9ecef;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 12px;
             flex-wrap: wrap;
         }
+
         .card-header h3 {
             margin: 0;
-            color: #333;
+            color: var(--text-dark);
             font-size: 1.2rem;
             font-weight: 600;
         }
+
         .filters {
             display: flex;
             gap: 10px;
             align-items: center;
             flex-wrap: wrap;
         }
+
         .filter-select, .search-input {
             padding: 8px 12px;
-            border: 2px solid #e9ecef;
+            border: 2px solid var(--border-color);
             border-radius: 8px;
             background: white;
             transition: border-color 0.2s ease;
         }
-        .filter-select:focus, .search-input:focus { outline: none; border-color: #ff7e5f; }
+
+        .filter-select:focus, .search-input:focus { 
+            outline: none; 
+            border-color: #ff7e5f; 
+            box-shadow: 0 0 0 3px rgba(255, 126, 95, 0.1);
+        }
+
         .points-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
             gap: 18px;
             padding: 20px;
         }
+
         .point-card {
             background: white;
-            border: 2px solid #e9ecef;
+            border: 2px solid var(--border-color);
             border-radius: 12px;
             padding: 18px;
             transition: all 0.2s ease;
             position: relative;
         }
+
         .point-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 24px rgba(0,0,0,0.08);
             border-color: #feb47b;
         }
+
         .point-card.inactive { opacity: 0.85; border-color: #f8d7da; }
         .point-header {
             display: flex;
@@ -135,13 +177,15 @@
             gap: 10px;
             margin-bottom: 8px;
         }
+
         .point-name {
             font-size: 1.15rem;
             font-weight: 700;
-            color: #333;
+            color: var(--text-dark);
             margin: 0;
             line-height: 1.2;
         }
+
         .badge {
             display: inline-block;
             padding: 4px 10px;
@@ -149,6 +193,7 @@
             font-size: 0.78rem;
             font-weight: 600;
         }
+
         .status-active { background: #d4edda; color: #155724; }
         .status-inactive { background: #f8d7da; color: #721c24; }
         .agency-chip {
@@ -162,48 +207,238 @@
             font-size: 0.8rem;
             margin-bottom: 8px;
         }
-        .info-list { margin: 8px 0 14px 0; color: #555; }
+
+        .info-list { margin: 8px 0 14px 0; color: var(--text-muted); }
         .info-item { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
         .info-item i { color: #ff7e5f; width: 16px; }
-        .card-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-        .loading { display: none; text-align: center; padding: 50px; }
+        .card-actions { 
+            display: flex; 
+            gap: 8px; 
+            flex-wrap: wrap; 
+        }
+        .card-actions .btn {
+            font-size: 0.85rem;
+            padding: 6px 10px;
+        }
+
+        .loading { 
+            display: none; 
+            text-align: center; 
+            padding: 50px; 
+        }
         .spinner {
-            border: 4px solid #f3f3f3; border-top: 4px solid #ff7e5f; border-radius: 50%;
-            width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 14px;
+            border: 4px solid #f3f3f3; 
+            border-top: 4px solid #ff7e5f; 
+            border-radius: 50%;
+            width: 40px; 
+            height: 40px; 
+            animation: spin 1s linear infinite; 
+            margin: 0 auto 14px;
         }
 
         @@keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-        .empty-state { text-align: center; padding: 60px 20px; color: #666; }
-        .empty-state i { font-size: 3rem; color: #ddd; margin-bottom: 10px; }
+
+        .empty-state { 
+            text-align: center; 
+            padding: 60px 20px; 
+            color: var(--text-muted); 
+            grid-column: 1 / -1;
+        }
+        .empty-state i { 
+            font-size: 3rem; 
+            color: #ddd; 
+            margin-bottom: 10px; 
+        }
+
         .modal {
-            display: none; position: fixed; z-index: 1000; inset: 0; background-color: rgba(0,0,0,0.5);
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            inset: 0; 
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.2s ease;
         }
-        .modal-content {
-            background: white; margin: 4% auto; border-radius: 14px; width: 92%; max-width: 520px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2); overflow: hidden;
-        }
-        .modal-header {
-            background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
-            color: white; padding: 18px 22px; display: flex; justify-content: space-between; align-items: center;
-        }
-        .modal-body { padding: 20px; }
-        .modal-footer { padding: 14px 20px; background: #f8f9fa; display: flex; justify-content: flex-end; gap: 8px; }
-        .form-group { margin-bottom: 14px; }
-        .form-group label { display: block; margin-bottom: 6px; color: #333; font-weight: 600; }
-        .form-control {
-            width: 100%; padding: 10px 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 0.98rem;
-        }
-        .form-control:focus { outline: none; border-color: #ff7e5f; }
-        .close { color: white; font-size: 26px; font-weight: bold; cursor: pointer; line-height: 1; }
 
+        .modal-content {
+            background: white; 
+            margin: 4% auto; 
+            border-radius: 14px; 
+            width: 92%; 
+            max-width: 520px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2); 
+            overflow: hidden;
+            animation: slideIn 0.3s ease;
+        }
+
+        .modal-header {
+            background: var(--primary-gradient);
+            color: white; 
+            padding: 18px 22px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+        }
+
+        .modal-body { padding: 20px; }
+        .modal-footer { 
+            padding: 14px 20px; 
+            background: var(--light-bg); 
+            display: flex; 
+            justify-content: flex-end; 
+            gap: 8px; 
+        }
+
+        .form-group { margin-bottom: 14px; }
+        .form-group label { 
+            display: block; 
+            margin-bottom: 6px; 
+            color: var(--text-dark); 
+            font-weight: 600; 
+        }
+        .form-control {
+            width: 100%; 
+            padding: 10px 12px; 
+            border: 2px solid var(--border-color); 
+            border-radius: 8px; 
+            font-size: 0.98rem;
+            transition: border-color 0.2s ease;
+        }
+        .form-control:focus { 
+            outline: none; 
+            border-color: #ff7e5f; 
+            box-shadow: 0 0 0 3px rgba(255, 126, 95, 0.1);
+        }
+        .close { 
+            color: white; 
+            font-size: 26px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            line-height: 1; 
+            transition: opacity 0.2s;
+        }
+        .close:hover { opacity: 0.8; }
+
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 350px;
+        }
+
+        .toast {
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            animation: slideInRight 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+            transition: transform 0.2s;
+        }
+
+        .toast-success { background: var(--success-color); }
+        .toast-error { background: var(--danger-color); }
+        .toast-warning { background: var(--warning-color); color: #212529; }
+        .toast-info { background: var(--info-color); }
+
+        .toast-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: rgba(255,255,255,0.7);
+            animation: progress 3s linear forwards;
+        }
+
+        /* Process indicators */
+        .process-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary-gradient);
+            border-radius: 8px 8px 0 0;
+            overflow: hidden;
+        }
+
+        .process-indicator::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        /* Stats in details modal */
+        .agency-stats {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff7e5f;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Animations */
+        @@keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @@keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @@keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @@keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        @@keyframes progress {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+
+        @@keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Responsive */
         @@media (max-width: 768px) {
             .dashboard-header {
                 flex-direction: column;
@@ -218,6 +453,15 @@
                 flex: 1;
                 min-width: 220px;
             }
+
+            .points-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .agency-stats {
+                flex-direction: column;
+                gap: 10px;
+            }
         }
     </style>
 </head>
@@ -229,7 +473,7 @@
                 <a href="@(User.IsInRole("SuperAdmin") ? "/SuperAdmin/Dashboard" : "/GlobalAdmin/Dashboard")" class="btn btn-primary">
                     <i class="bi bi-arrow-left"></i> Retour
                 </a>
-                <button class="btn btn-success" onclick="openCreateModal()">
+                <button class="btn btn-success" onclick="openCreateModal()" id="createPointBtn">
                     <i class="bi bi-plus-circle"></i> Nouveau Point
                 </button>
             </div>
@@ -247,7 +491,7 @@
                         <option value="true">Actifs</option>
                         <option value="false">Inactifs</option>
                     </select>
-                    <input type="text" id="searchInput" class="search-input" placeholder="Rechercher un point..." oninput="applyFilters()">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Rechercher un point..." oninput="debounce(applyFilters, 300)()">
                 </div>
             </div>
 
@@ -260,9 +504,13 @@
         </div>
     </div>
 
-    <!-- Modal création point -->
+    <!-- Toast container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Modal création/édition point -->
     <div id="pointModal" class="modal">
         <div class="modal-content">
+            <div class="process-indicator" id="modalProcessIndicator" style="display:none;"></div>
             <div class="modal-header">
                 <h3 id="modalTitle">Nouveau Point d'Agence</h3>
                 <span class="close" onclick="closeModal()">&times;</span>
@@ -295,41 +543,119 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn" onclick="closeModal()">Annuler</button>
-                <button type="button" class="btn btn-success" onclick="savePoint()">
+                <button type="button" class="btn btn-success" onclick="savePoint()" id="savePointBtn">
                     <i class="bi bi-check-circle"></i> Enregistrer
                 </button>
             </div>
         </div>
     </div>
 
+    <!-- Modal détails point -->
+    <div id="detailsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Détails du Point d'Agence</h3>
+                <span class="close" onclick="closeDetailsModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="detailsModalBody">
+                <!-- Contenu dynamique -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeDetailsModal()">Fermer</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-    const apiBase = location.pathname.startsWith('/GlobalAdmin')
+        // Configuration et variables globales
+        const apiBase = location.pathname.startsWith('/GlobalAdmin')
             ? '/GlobalAdmin/api'
             : '/SuperAdmin/api';
+        
         let points = [];
         let agencies = [];
         let filteredPoints = [];
+        let currentPointId = null;
+        let debounceTimer;
 
+        // Initialisation
         document.addEventListener('DOMContentLoaded', function () {
             loadAgencies().then(() => loadPoints());
         });
 
+        // Utilitaires
+        function debounce(func, wait) {
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(debounceTimer);
+                    func(...args);
+                };
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(later, wait);
+            };
+        }
+
+        function showProcessIndicator(element) {
+            if (element) {
+                element.disabled = true;
+                const originalText = element.innerHTML;
+                element.innerHTML = '<i class="bi bi-hourglass-split"></i> Traitement...';
+                return () => {
+                    element.disabled = false;
+                    element.innerHTML = originalText;
+                };
+            }
+            return () => {};
+        }
+
+        function showToast(message, type = 'info', duration = 3000) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            const icons = {
+                success: 'bi-check-circle',
+                error: 'bi-exclamation-triangle',
+                warning: 'bi-exclamation-circle',
+                info: 'bi-info-circle'
+            };
+            
+            toast.innerHTML = `
+                <i class="bi ${icons[type] || icons.info}"></i>
+                <span>${message}</span>
+                <div class="toast-progress"></div>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.style.animation = 'fadeOut 0.3s ease forwards';
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, duration);
+        }
+
+        // Gestion des agences
         async function loadAgencies() {
             try {
                 const res = await fetch(`${apiBase}/agencies`);
                 if (res.ok) {
                     agencies = await res.json();
                     populateAgencyFilters();
+                } else {
+                    showToast('Erreur lors du chargement des agences', 'error');
                 }
             } catch (e) {
-                console.error(e);
-                showToast('Erreur lors du chargement des agences', false);
+                console.error('Erreur agences:', e);
+                showToast('Erreur de connexion lors du chargement des agences', 'error');
             }
         }
 
         function populateAgencyFilters() {
             const agencyFilter = document.getElementById('agencyFilter');
             const pointAgencySelect = document.getElementById('pointAgencyId');
+            
             agencyFilter.innerHTML = '<option value="">Toutes les agences</option>';
             pointAgencySelect.innerHTML = '<option value="">Sélectionner une agence</option>';
 
@@ -341,25 +667,26 @@
             });
         }
 
+        // Gestion des points
         async function loadPoints() {
             const loading = document.getElementById('loading');
             const container = document.getElementById('pointsContainer');
+            
             loading.style.display = 'block';
             container.innerHTML = '';
 
-
-                try {
+            try {
                 const res = await fetch(`${apiBase}/agency-points`);
                 if (res.ok) {
                     points = await res.json();
                     filteredPoints = points.slice();
                     renderPoints(filteredPoints);
                 } else {
-                    showToast('Erreur lors du chargement des points', false);
+                    showToast('Erreur lors du chargement des points', 'error');
                 }
             } catch (e) {
-                console.error(e);
-                showToast('Erreur de connexion', false);
+                console.error('Erreur points:', e);
+                showToast('Erreur de connexion lors du chargement des points', 'error');
             } finally {
                 loading.style.display = 'none';
             }
@@ -368,7 +695,7 @@
         function applyFilters() {
             const term = (document.getElementById('searchInput').value || '').toLowerCase();
             const agencyId = document.getElementById('agencyFilter').value;
-            const status = document.getElementById('statusFilter').value; // 'true' | 'false' | ''
+            const status = document.getElementById('statusFilter').value;
 
             filteredPoints = points.filter(p => {
                 const name = (p.name ?? p.Name ?? '').toLowerCase();
@@ -376,9 +703,11 @@
                 const phone = (p.phone ?? p.Phone ?? '').toLowerCase();
                 const address = (p.address ?? p.Address ?? '').toLowerCase();
                 const agencyName = (p.agencyName ?? p.AgencyName ?? '').toLowerCase();
+                
                 const textOk = !term || [name, email, phone, address, agencyName].some(v => v.includes(term));
                 const agencyOk = !agencyId || String(p.agencyId ?? p.AgencyId) === String(agencyId);
                 const statusOk = !status || String(p.isActive ?? p.IsActive) === status;
+                
                 return textOk && agencyOk && statusOk;
             });
 
@@ -409,7 +738,6 @@
                 const createdAt = p.createdAt ?? p.CreatedAt;
                 const usersCount = p.usersCount ?? p.UsersCount ?? 0;
                 const agencyName = p.agencyName ?? p.AgencyName ?? '-';
-                const agencyId = p.agencyId ?? p.AgencyId;
 
                 return `
                 <div class="point-card ${!isActive ? 'inactive' : ''}">
@@ -427,61 +755,23 @@
                         ${createdAt ? `<div class="info-item"><i class="bi bi-calendar"></i> <span>Créé le ${new Date(createdAt).toLocaleDateString('fr-FR')}</span></div>` : ''}
                         <div class="info-item"><i class="bi bi-people"></i> <span>${usersCount} utilisateur(s)</span></div>
                     </div>
-            <div class="card-actions">
-    <button class="btn btn-info btn-sm" onclick="viewPointDetails('${id}')">
-        <i class="bi bi-eye"></i> Voir
-    </button>
-    <button class="btn ${isActive ? 'btn-danger' : 'btn-success'} btn-sm"
-            onclick="togglePointStatus('${id}', ${isActive})">
-        <i class="bi bi-${isActive ? 'pause' : 'play'}"></i> ${isActive ? 'Désactiver' : 'Activer'}
-    </button>
-                <button class="btn btn-warning btn-sm" onclick="openEditModal('${id}')">
-                    <i class="bi bi-pencil"></i> Modifier
-                </button>
-</div>
+                    <div class="card-actions">
+                        <button class="btn btn-info btn-sm" onclick="viewPointDetails('${id}')">
+                            <i class="bi bi-eye"></i> Voir
+                        </button>
+                        <button class="btn ${isActive ? 'btn-danger' : 'btn-success'} btn-sm"
+                                onclick="togglePointStatus('${id}', ${isActive})">
+                            <i class="bi bi-${isActive ? 'pause' : 'play'}"></i> ${isActive ? 'Désactiver' : 'Activer'}
+                        </button>
+                        <button class="btn btn-warning btn-sm" onclick="openEditModal('${id}')">
+                            <i class="bi bi-pencil"></i> Modifier
+                        </button>
+                    </div>
                 </div>`;
             }).join('');
         }
 
-        async function viewPointDetails(id) {
-    const base = location.pathname.toLowerCase().startsWith('/globaladmin') ? '/GlobalAdmin' : '/SuperAdmin';
-    try {
-        const res = await fetch(`${base}/api/agency-points/${id}`);
-        if (!res.ok) { showToast('Erreur lors du chargement des détails', false); return; }
-        const p = await res.json();
-        const modal = document.createElement('div');
-        modal.className = 'modal';
-        modal.style.display = 'block';
-        modal.innerHTML = `
-        <div class="modal-content">
-          <div class="modal-header">
-            <h3>Détails du Point d'Agence</h3>
-            <span class="close" onclick="this.closest('.modal').remove()">&times;</span>
-          </div>
-          <div class="modal-body">
-            <div class="form-group"><label><i class="bi bi-geo-alt"></i> Nom</label><div>${p.name || '-'}</div></div>
-            <div class="form-group"><label><i class="bi bi-building"></i> Agence</label><div>${p.agencyName || '-'}</div></div>
-            <div class="form-group"><label><i class="bi bi-envelope"></i> Email</label><div>${p.email || '-'}</div></div>
-            <div class="form-group"><label><i class="bi bi-telephone"></i> Téléphone</label><div>${p.phone || '-'}</div></div>
-            <div class="form-group"><label><i class="bi bi-geo"></i> Adresse</label><div>${p.address || '-'}</div></div>
-            <div class="form-group"><label><i class="bi bi-calendar"></i> Créé le</label><div>${p.createdAt ? new Date(p.createdAt).toLocaleDateString('fr-FR') : '-'}</div></div>
-            <div class="agency-stats" style="margin-top:10px;">
-              <div class="stat-item"><div class="stat-number">${p.usersCount ?? 0}</div><div class="stat-label">Utilisateurs</div></div>
-              <div class="stat-item"><div class="stat-number">${p.reservationsCount ?? 0}</div><div class="stat-label">Réservations</div></div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" onclick="this.closest('.modal').remove()">Fermer</button>
-          </div>
-        </div>`;
-        document.body.appendChild(modal);
-    } catch (e) {
-        console.error(e);
-        showToast('Erreur de connexion', false);
-    }
-}
-
-        let currentPointId = null;
+        // Gestion des modals
         function openCreateModal() {
             currentPointId = null;
             document.getElementById('pointForm').reset();
@@ -491,7 +781,11 @@
 
         function openEditModal(id) {
             const p = points.find(x => (x.id || x.Id) === id);
-            if (!p) return;
+            if (!p) {
+                showToast('Point non trouvé', 'error');
+                return;
+            }
+            
             currentPointId = id;
             document.getElementById('modalTitle').textContent = 'Modifier le Point d\'Agence';
             document.getElementById('pointName').value = p.name || p.Name || '';
@@ -506,84 +800,239 @@
             document.getElementById('pointModal').style.display = 'none';
         }
 
-        async function savePoint() {
-            const form = document.getElementById('pointForm');
-            const data = Object.fromEntries(new FormData(form));
-            // Adapter aux DTOs backend (Name, Address, Phone, Email, AgencyId)
-            const payload = {
-                name: data.name,
-                address: data.address,
-                phone: data.phone,
-                email: data.email || null,
-                agencyId: data.agencyId
-            };
-
-            if (!payload.name || !payload.address || !payload.phone || !payload.agencyId) {
-                showToast('Veuillez renseigner tous les champs obligatoires', false);
-                return;
-            }
+        async function viewPointDetails(id) {
+            const modal = document.getElementById('detailsModal');
+            const modalBody = document.getElementById('detailsModalBody');
+            
+            modalBody.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div class="spinner"></div>
+                    <p>Chargement des détails...</p>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
 
             try {
-                // bouton loading
-                const saveBtn = event?.target?.closest('button');
-                if (saveBtn) { saveBtn.disabled = true; saveBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Enregistrement...'; }
-                const url = currentPointId ? `${apiBase}/agency-points/${currentPointId}` : `${apiBase}/agency-points`;
-                const method = currentPointId ? 'PUT' : 'POST';
-                const res = await fetch(url, {
-                    method,
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                if (res.ok) {
-                    closeModal();
-                    await loadPoints();
-                    showToast(currentPointId ? 'Point modifié avec succès' : 'Point créé avec succès', true);
-                } else {
-                    const err = await res.json().catch(() => ({}));
-                    showToast(err.message || 'Erreur lors de la création', false);
+                const res = await fetch(`${apiBase}/agency-points/${id}`);
+                if (!res.ok) {
+                    throw new Error('Erreur lors du chargement des détails');
                 }
+                
+                const p = await res.json();
+                const idVal = p.id ?? p.Id;
+                const name = p.name ?? p.Name ?? '-';
+                const email = p.email ?? p.Email ?? '-';
+                const phone = p.phone ?? p.Phone ?? '-';
+                const address = p.address ?? p.Address ?? '-';
+                const isActive = (p.isActive ?? p.IsActive) === true;
+                const createdAt = p.createdAt ?? p.CreatedAt;
+                const usersCount = p.usersCount ?? p.UsersCount ?? 0;
+                const reservationsCount = p.reservationsCount ?? p.ReservationsCount ?? 0;
+                const agencyName = p.agencyName ?? p.AgencyName ?? '-';
+
+                modalBody.innerHTML = `
+                    <div class="form-group">
+                        <label><i class="bi bi-geo-alt"></i> Nom</label>
+                        <div>${name}</div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="bi bi-building"></i> Agence</label>
+                        <div>${agencyName}</div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="bi bi-envelope"></i> Email</label>
+                        <div>${email}</div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="bi bi-telephone"></i> Téléphone</label>
+                        <div>${phone}</div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="bi bi-geo"></i> Adresse</label>
+                        <div>${address}</div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="bi bi-calendar"></i> Créé le</label>
+                        <div>${createdAt ? new Date(createdAt).toLocaleDateString('fr-FR') : '-'}</div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="bi bi-info-circle"></i> Statut</label>
+                        <div>
+                            <span class="badge ${isActive ? 'status-active' : 'status-inactive'}">
+                                ${isActive ? 'Actif' : 'Inactif'}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="agency-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">${usersCount}</div>
+                            <div class="stat-label">Utilisateurs</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">${reservationsCount}</div>
+                            <div class="stat-label">Réservations</div>
+                        </div>
+                    </div>
+                `;
             } catch (e) {
-                console.error(e);
-                showToast('Erreur de connexion', false);
-            } finally {
-                const saveBtn = event?.target?.closest('button');
-                if (saveBtn) { saveBtn.disabled = false; saveBtn.innerHTML = '<i class="bi bi-check-circle"></i> Enregistrer'; }
+                console.error('Erreur détails:', e);
+                modalBody.innerHTML = `
+                    <div style="text-align: center; color: var(--danger-color); padding: 20px;">
+                        <i class="bi bi-exclamation-triangle" style="font-size: 2rem;"></i>
+                        <p>Erreur lors du chargement des détails</p>
+                    </div>
+                `;
             }
         }
 
+        function closeDetailsModal() {
+            document.getElementById('detailsModal').style.display = 'none';
+        }
+
+        // Actions sur les points
+        async function savePoint() {
+    const form = document.getElementById('pointForm');
+    const data = Object.fromEntries(new FormData(form));
+    
+    const payload = {
+        name: data.name,
+        address: data.address,
+        phone: data.phone,
+        email: data.email || null,
+        agencyId: data.agencyId
+    };
+
+    if (!payload.name || !payload.address || !payload.phone || !payload.agencyId) {
+        showToast('Veuillez renseigner tous les champs obligatoires', 'warning');
+        return;
+    }
+
+    // Afficher l'indicateur de chargement
+    const loadingMessage = currentPointId 
+        ? 'Mise à jour du point en cours...' 
+        : 'Création du point en cours...';
+    showLoadingIndicator(loadingMessage);
+
+    try {
+        const url = currentPointId 
+            ? `${apiBase}/agency-points/${currentPointId}` 
+            : `${apiBase}/agency-points`;
+        
+        const method = currentPointId ? 'PUT' : 'POST';
+        
+        const res = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        
+        if (res.ok) {
+            // SUCCÈS - Afficher le message de validation vert
+            showToast(
+                currentPointId ? 'Point modifié avec succès' : 'Point créé avec succès', 
+                'success'
+            );
+            closeModal();
+            await loadPoints();
+        } else {
+            // ERREUR - Récupérer le message d'erreur du serveur
+            let errorMessage = 'Erreur lors de l\'enregistrement';
+            
+            try {
+                const errorData = await res.json();
+                errorMessage = errorData.message || errorMessage;
+                
+                // Gérer les erreurs de validation spécifiques
+                if (errorData.errors) {
+                    const validationErrors = Object.values(errorData.errors).flat();
+                    errorMessage = validationErrors.join(', ') || errorMessage;
+                }
+            } catch (parseError) {
+                // Si la réponse n'est pas du JSON, utiliser le statut HTTP
+                errorMessage = `Erreur ${res.status}: ${res.statusText}`;
+            }
+            
+            showToast(errorMessage, 'error');
+        }
+    } catch (e) {
+        console.error('Erreur sauvegarde:', e);
+        showToast('Erreur de connexion lors de l\'enregistrement', 'error');
+    } finally {
+        // Toujours masquer l'indicateur de chargement
+        hideLoadingIndicator();
+    }
+}
+
+// Fonction pour afficher l'indicateur de chargement
+function showLoadingIndicator(message = 'Enregistrement en cours...') {
+    const overlay = document.getElementById('modalLoadingOverlay');
+    const loadingText = document.getElementById('modalLoadingText');
+    const saveBtn = document.getElementById('savePointBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    
+    if (loadingText) loadingText.textContent = message;
+    if (overlay) overlay.style.display = 'flex';
+    
+    // Désactiver les boutons
+    if (saveBtn) saveBtn.disabled = true;
+    if (cancelBtn) cancelBtn.disabled = true;
+    
+    // Ajouter l'indicateur de chargement au bouton
+    if (saveBtn) saveBtn.classList.add('btn-loading');
+}
+
+// Fonction pour masquer l'indicateur de chargement
+function hideLoadingIndicator() {
+    const overlay = document.getElementById('modalLoadingOverlay');
+    const saveBtn = document.getElementById('savePointBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    
+    if (overlay) overlay.style.display = 'none';
+    
+    // Réactiver les boutons
+    if (saveBtn) saveBtn.disabled = false;
+    if (cancelBtn) cancelBtn.disabled = false;
+    
+    // Retirer l'indicateur de chargement du bouton
+    if (saveBtn) saveBtn.classList.remove('btn-loading');
+}
+
         async function togglePointStatus(id, isActive) {
+            const pointCard = document.querySelector(`[onclick*="${id}"]`)?.closest('.point-card');
+            const button = document.querySelector(`[onclick*="togglePointStatus('${id}', ${isActive})"]`);
+            
+            if (button) {
+                button.disabled = true;
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="bi bi-hourglass-split"></i> ...';
+            }
+
             try {
                 const res = await fetch(`${apiBase}/agency-points/${id}/toggle-status`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ isActive: !isActive })
                 });
+                
                 if (res.ok) {
                     await loadPoints();
-                    showToast(`Point ${!isActive ? 'activé' : 'désactivé'} avec succès`, true);
+                    showToast(`Point ${!isActive ? 'activé' : 'désactivé'} avec succès`, 'success');
                 } else {
-                    showToast('Erreur lors du changement de statut', false);
+                    showToast('Erreur lors du changement de statut', 'error');
                 }
             } catch (e) {
-                console.error(e);
-                showToast('Erreur de connexion', false);
+                console.error('Erreur statut:', e);
+                showToast('Erreur de connexion lors du changement de statut', 'error');
+            } finally {
+                if (button) {
+                    button.disabled = false;
+                    button.innerHTML = originalText;
+                }
             }
         }
 
-        function showToast(message, success) {
-            const n = document.createElement('div');
-            n.style.cssText = `position:fixed;top:20px;right:20px;padding:12px 16px;border-radius:8px;z-index:1001;` +
-                (success ? `background:#d4edda;color:#155724;` : `background:#f8d7da;color:#721c24;`);
-            n.innerHTML = `<i class="bi ${success ? 'bi-check-circle' : 'bi-exclamation-triangle'}"></i> ${message}`;
-            document.body.appendChild(n);
-            setTimeout(() => n.remove(), 3200);
-        }
-
-        // Fermer le modal en cliquant à l'extérieur
-        window.onclick = function (e) {
-            const modal = document.getElementById('pointModal');
-            if (e.target === modal) { closeModal(); }
-        }
+        // Fermer les modals en cliquant à l'ext
     </script>
 </body>
 </html>
